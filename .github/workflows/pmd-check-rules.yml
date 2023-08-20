@@ -24,11 +24,23 @@ jobs:
   pmd_check_rules:
     runs-on: ubuntu-latest
     steps:
-    - name: Check PMD
+    - name: Run PMD Check Rules
       uses: pmd/pmd-github-action@v1
-      id: pmd
+      id: pmd-check
       with:
         version: ${{ inputs.version }}
         sourcePath: ${{ inputs.source-path }}
         rulesets: ${{ inputs.rulesets }}
         analyzeModifiedFilesOnly: false
+
+    - name: No PMD Rules Violation
+      if: steps.pmd-check.outputs.violations == 0
+      run: |
+        echo "No violation of the PMD Rules. Congratulations! :)"         
+
+    - name: PMD Rules Violations
+      if: steps.pmd-check.outputs.violations != 0
+      run: |
+        echo "Number of Violations: ${{ steps.pmd-check.outputs.violations }} - (Must be Zero!!!)"
+        echo "Check previous step for more details!!!"
+        exit 1
