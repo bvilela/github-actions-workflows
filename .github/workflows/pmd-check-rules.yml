@@ -22,6 +22,7 @@ on:
 
 jobs:
   pmd_check_rules:
+    name: PMD Check Rules
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
