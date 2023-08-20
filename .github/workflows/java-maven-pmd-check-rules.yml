@@ -1,7 +1,5 @@
 name: PMD Check Rules
 
-run-name: PMD Check Rules
-
 on:
   workflow_call:
     inputs:
@@ -23,8 +21,7 @@ on:
 
 
 jobs:
-  pmd_check_rules:
-    name: PMD Check Rules
+  pmd-check-rules:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
