@@ -1,0 +1,34 @@
+name: PMD Check Rules
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: 'PMD version'
+        default: '6.53.0'
+        required: false
+        type: string
+      source-path:
+        description: 'Source Path to Analyse'
+        default: 'app/src'
+        required: false
+        type: string
+      rulesets:
+        description: 'Rulesets file path'
+        default: 'app/pmd-ruleset.xml'
+        required: false
+        type: string
+
+
+jobs:
+  pmd_check_rules:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check PMD
+      uses: pmd/pmd-github-action@v1
+      id: pmd
+      with:
+        version: ${{ inputs.version }}
+        sourcePath: ${{ inputs.source-path }}
+        rulesets: ${{ inputs.rulesets }}
+        analyzeModifiedFilesOnly: false
