@@ -1,5 +1,7 @@
 name: PMD Check Rules
 
+run-name: PMD Check Rules
+
 on:
   workflow_call:
     inputs:
