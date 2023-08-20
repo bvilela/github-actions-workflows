@@ -24,6 +24,9 @@ jobs:
   pmd_check_rules:
     runs-on: ubuntu-latest
     steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
     - name: Run PMD Check Rules
       uses: pmd/pmd-github-action@v1
       id: pmd-check
