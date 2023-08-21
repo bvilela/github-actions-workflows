@@ -1,0 +1,63 @@
+name: PMD Check Rules
+
+on:
+  workflow_call:
+    inputs:
+      java-version:
+        default: '11'
+        required: false
+        type: string
+      distribution:
+        default: 'temurin'
+        required: false
+        type: string
+      pom-path:
+        description: Path to pom.xml file
+        default: 'app/pom.xml'
+        required: false
+        type: string
+      maven-settings-file:
+        description: Path to maven-settings.xml file, if necessary
+        default: null
+        required: false
+        type: string
+
+jobs:
+  java-build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      
+      - name: Setup JDK ${{ inputs.java-version }} 
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ inputs.java-version }}
+          distribution: ${{ inputs.distribution }} 
+          cache: maven # Memorizar dependências
+
+        
+        ##### BUILD #####
+      - name: Build
+        id: build-with-settings
+        if: inputs.maven-settings-file != null
+        run: mvn -s $GITHUB_WORKSPACE/.github/workflows/${{ inputs.maven-settings-file }} -B package --file ${{ inputs.pom-path }} -DskipTests
+        
+      - name: Build
+        id: build-without-settings
+        if: inputs.maven-settings-file == null
+        run: mvn -B package --file ${{ inputs.pom-path }} -DskipTests
+
+        
+        #### TESTS #####
+      - name: Test
+        id: test-with-settings
+        if: inputs.maven-settings-file != null
+        run: mvn -s $GITHUB_WORKSPACE/.github/workflows/maven-settings.xml test --file ${{ inputs.pom-path }} 
+
+      - name: Test
+        id: test-without-settings
+        if: inputs.maven-settings-file == null
+        run: mvn test --file ${{ inputs.pom-path }}
