@@ -2,6 +2,15 @@ name: Java Maven Sonar Analyse
 
 on:
   workflow_call:
+    inputs:
+      java-version:
+        default: 11
+        required: false
+        type: number
+      projectKey:
+        default: null
+        required: true
+        type: string
     secrets:
       github-token:
         required: true
@@ -14,6 +23,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Setup JDK ${{ inputs.java-version }} 
+        uses: actions/setup-java@v3
+        with:
+          java-version: temurin
+          distribution: temurin
+          cache: maven # Memorizar dependências
 
       - name: Cache SonarCloud packages
         uses: actions/cache@v1
@@ -36,4 +52,4 @@ jobs:
         run: |
           echo "Change directory..."
           cd app
-          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=bvilela_list-builder
+          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=${{ inputs.projectKey }}
