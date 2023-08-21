@@ -23,44 +23,41 @@ on:
         type: string
 
 jobs:
-  Checkout:
+  java-build-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       
-  SetupJDK:
-    needs: Checkout
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo Setup JDK ${{ inputs.java-version }} 
-      - uses: actions/setup-java@v3
+      - name: Setup JDK ${{ inputs.java-version }} 
+        uses: actions/setup-java@v3
         with:
           java-version: ${{ inputs.java-version }}
           distribution: ${{ inputs.distribution }} 
           cache: maven # Memorizar dependências
 
-  Build:
-    needs: SetupJDK
-    runs-on: ubuntu-latest
-    steps:
-      - id: build-with-settings
+        
+        ##### BUILD #####
+      - name: Build
+        id: build-with-settings
         if: inputs.maven-settings-file != null
         run: mvn -s $GITHUB_WORKSPACE/.github/workflows/${{ inputs.maven-settings-file }} -B package --file ${{ inputs.pom-path }} -DskipTests
         
-      - id: build-without-settings
+      - name: Build
+        id: build-without-settings
         if: inputs.maven-settings-file == null
         run: mvn -B package --file ${{ inputs.pom-path }} -DskipTests
 
-  Test:
-    needs: Build
-    runs-on: ubuntu-latest
-    steps:
-      - id: test-with-settings
+        
+        #### TESTS #####
+      - name: Test
+        id: test-with-settings
         if: inputs.maven-settings-file != null
         run: mvn -s $GITHUB_WORKSPACE/.github/workflows/maven-settings.xml test --file ${{ inputs.pom-path }} 
 
-      - id: test-without-settings
+      - name: Test
+        id: test-without-settings
         if: inputs.maven-settings-file == null
         run: mvn test --file ${{ inputs.pom-path }}
