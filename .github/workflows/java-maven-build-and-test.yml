@@ -1,4 +1,4 @@
-name: PMD Check Rules
+name: Java Maven Build and Test
 
 on:
   workflow_call:
@@ -52,11 +52,11 @@ jobs:
         
         #### TESTS #####
       - name: Test
-        id: test-with-settings
-        if: inputs.maven-settings-file != null
-        run: mvn -s $GITHUB_WORKSPACE/.github/workflows/maven-settings.xml test --file ${{ inputs.pom-path }} 
-
-      - name: Test
-        id: test-without-settings
-        if: inputs.maven-settings-file == null
-        run: mvn test --file ${{ inputs.pom-path }}
+        run: |
+          if [[ ${{ inputs.maven-settings-file }} == null ]]; then
+            echo "Running Tests without Settings.xml file"
+            mvn test --file ${{ inputs.pom-path }}
+          else
+            echo "Running Tests with Settings.xml file"
+            mvn -s $GITHUB_WORKSPACE/.github/workflows/${{ inputs.maven-settings-file }} test --file ${{ inputs.pom-path }}
+          fi

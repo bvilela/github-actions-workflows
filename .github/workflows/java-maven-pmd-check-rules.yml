@@ -1,4 +1,4 @@
-name: PMD Check Rules
+name: Java Maven PMD Check Rules
 
 on:
   workflow_call:
