@@ -27,8 +27,8 @@ jobs:
       - name: Setup JDK ${{ inputs.java-version }} 
         uses: actions/setup-java@v3
         with:
-          java-version: temurin
-          distribution: temurin
+          java-version: ${{ inputs.java-version }}
+          distribution: temurin 
           cache: maven # Memorizar dependências
 
       - name: Cache SonarCloud packages
