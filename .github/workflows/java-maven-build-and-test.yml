@@ -4,9 +4,9 @@ on:
   workflow_call:
     inputs:
       java-version:
-        default: '11'
+        default: 11
         required: false
-        type: string
+        type: number
       distribution:
         default: 'temurin'
         required: false
