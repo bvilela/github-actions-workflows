@@ -41,15 +41,14 @@ jobs:
         
         ##### BUILD #####
       - name: Build
-        id: build-with-settings
-        if: inputs.maven-settings-file != null
-        run: mvn -s $GITHUB_WORKSPACE/.github/workflows/${{ inputs.maven-settings-file }} -B package --file ${{ inputs.pom-path }} -DskipTests
-        
-      - name: Build
-        id: build-without-settings
-        if: inputs.maven-settings-file == null
-        run: mvn -B package --file ${{ inputs.pom-path }} -DskipTests
-
+        run: |
+          if [[ ${{ inputs.maven-settings-file }} == null ]]; then
+            echo "Running Build without Settings.xml file"
+            mvn -B package --file ${{ inputs.pom-path }} -DskipTests
+          else
+            echo "Running Build with Settings.xml file"
+            mvn -s $GITHUB_WORKSPACE/.github/workflows/${{ inputs.maven-settings-file }} -B package --file ${{ inputs.pom-path }} -DskipTests
+          fi
         
         #### TESTS #####
       - name: Test
