@@ -1,7 +1,7 @@
 on:
   workflow_call:
     inputs:
-      java-version:
+      java_version:
         default: 11
         required: false
         type: number
@@ -9,12 +9,12 @@ on:
         default: 'temurin'
         required: false
         type: string
-      pom-path:
+      pom_path:
         description: Path to pom.xml file
         default: 'app/pom.xml'
         required: false
         type: string
-      maven-settings-file:
+      maven_settings_file:
         description: Path to maven-settings.xml file, if necessary
         default: null
         required: false
@@ -29,31 +29,31 @@ jobs:
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       
-      - name: Setup JDK ${{ inputs.java-version }} 
+      - name: Setup JDK ${{ inputs.java_version }} 
         uses: actions/setup-java@v3
         with:
-          java-version: ${{ inputs.java-version }}
+          java-version: ${{ inputs.java_version }}
           distribution: ${{ inputs.distribution }} 
           cache: maven # Memorizar dependências
 
         ##### BUILD #####
       - name: Build
         run: |
-          if [[ ${{ inputs.maven-settings-file }} == null ]]; then
+          if [[ ${{ inputs.maven_settings_file }} == null ]]; then
             echo "Running Build without Settings.xml file"
-            mvn -B package --file ${{ inputs.pom-path }} -DskipTests
+            mvn -B package --file ${{ inputs.pom_path }} -DskipTests
           else
             echo "Running Build with Settings.xml file"
-            mvn -s $GITHUB_WORKSPACE/.github/workflows/${{ inputs.maven-settings-file }} -B package --file ${{ inputs.pom-path }} -DskipTests
+            mvn -s $GITHUB_WORKSPACE/.github/workflows/${{ inputs.maven_settings_file }} -B package --file ${{ inputs.pom_path }} -DskipTests
           fi
         
         #### TESTS #####
       - name: Test
         run: |
-          if [[ ${{ inputs.maven-settings-file }} == null ]]; then
+          if [[ ${{ inputs.maven_settings_file }} == null ]]; then
             echo "Running Tests without Settings.xml file"
-            mvn test --file ${{ inputs.pom-path }}
+            mvn test --file ${{ inputs.pom_path }}
           else
             echo "Running Tests with Settings.xml file"
-            mvn -s $GITHUB_WORKSPACE/.github/workflows/${{ inputs.maven-settings-file }} test --file ${{ inputs.pom-path }}
+            mvn -s $GITHUB_WORKSPACE/.github/workflows/${{ inputs.maven_settings_file }} test --file ${{ inputs.pom_path }}
           fi

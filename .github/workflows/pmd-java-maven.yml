@@ -6,7 +6,7 @@ on:
         default: '6.53.0'
         required: false
         type: string
-      source-path:
+      source_path:
         description: 'Source Path to Analyse'
         default: 'app/src'
         required: false
@@ -30,7 +30,7 @@ jobs:
         id: pmd-check
         with:
           version: ${{ inputs.version }}
-          sourcePath: ${{ inputs.source-path }}
+          sourcePath: ${{ inputs.source_path }}
           rulesets: ${{ inputs.rulesets }}
           analyzeModifiedFilesOnly: false
 

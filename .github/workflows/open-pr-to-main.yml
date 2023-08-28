@@ -1,12 +1,17 @@
 on:
   workflow_call:
     inputs:
+      base_branch:
+        description: Base branch
+        default: main
+        type: string
+        required: false        
       title:
         description: PR Title
         default: '[Example] Simple demo'
         type: string
         required: false
-      commit-message:
+      commit_message:
         description: Commit Message PR
         default: 'Simple demo'
         type: string
@@ -37,7 +42,10 @@ jobs:
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          base: ${{ inputs.base_branch}}
           branch: ${{ steps.extract_branch.outputs.branch }}
           title: ${{ inputs.title }}
-          commit-message: ${{ inputs.commit-message }}
+          commit-message: ${{ inputs.commit_message }}
           body: ${{ inputs.body }}
+          draft: false
+          delete-branch: false

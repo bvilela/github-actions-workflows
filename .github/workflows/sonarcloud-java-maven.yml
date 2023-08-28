@@ -1,7 +1,7 @@
 on:
   workflow_call:
     inputs:
-      java-version:
+      java_version:
         default: 11
         required: false
         type: number
@@ -17,10 +17,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup JDK ${{ inputs.java-version }} 
+      - name: Setup JDK ${{ inputs.java_version }} 
         uses: actions/setup-java@v3
         with:
-          java-version: ${{ inputs.java-version }}
+          java-version: ${{ inputs.java_version }}
           distribution: temurin 
           cache: maven # Memorizar dependências
 
