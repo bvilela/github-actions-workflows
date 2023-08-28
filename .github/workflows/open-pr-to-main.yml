@@ -43,13 +43,21 @@ jobs:
         id: extract_branch
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.token }}
-          base: ${{ inputs.base_branch}}
-          branch: ${{ steps.extract_branch.outputs.branch }}
-          title: ${{ inputs.title }}
-          commit-message: ${{ inputs.commit_message }}
-          body: ${{ inputs.body }}
-          draft: false
-          delete-branch: false
+        run: |
+          gh pr create -B ${{ inputs.base_branch }} -H ${{ steps.extract_branch.outputs.branch }} 
+          --title 'Merge ${{ steps.extract_branch.outputs.branch }} into ${{ inputs.base_branch }}'
+          --body 'Created by Github action'
+        env:
+          GITHUB_TOKEN: ${{ secrets.token }}
+
+      # - name: Create Pull Request
+      #   uses: peter-evans/create-pull-request@v5
+      #   with:
+      #     token: ${{ secrets.token }}
+      #     base: ${{ inputs.base_branch}}
+      #     branch: ${{ steps.extract_branch.outputs.branch }}
+      #     title: ${{ inputs.title }}
+      #     commit-message: ${{ inputs.commit_message }}
+      #     body: ${{ inputs.body }}
+      #     draft: false
+      #     delete-branch: false
