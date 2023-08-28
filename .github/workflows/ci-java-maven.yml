@@ -1,5 +1,3 @@
-name: CI Java Maven
-
 on:
   workflow_call:
     inputs:
