@@ -11,11 +11,6 @@ on:
         default: '[Example] Simple demo'
         type: string
         required: false
-      commit_message:
-        description: Commit Message PR
-        default: 'Simple demo'
-        type: string
-        required: false
       body:
         description: PR Body
         default: >
@@ -44,8 +39,8 @@ jobs:
 
       - name: Create Pull Request
         run: |
-          gh pr create -B ${{ inputs.base_branch }} -H ${{ steps.extract_branch.outputs.branch }} 
-          --title 'Merge ${{ steps.extract_branch.outputs.branch }} into ${{ inputs.base_branch }}'
+          gh pr create -B ${{ inputs.base_branch }} -H ${{ steps.extract_branch.outputs.branch }}  \
+          --title 'Merge ${{ steps.extract_branch.outputs.branch }} into ${{ inputs.base_branch }}' \
           --body 'Created by Github action'
         env:
           GITHUB_TOKEN: ${{ secrets.token }}
