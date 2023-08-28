@@ -1,4 +1,4 @@
-name: Java Maven Build and Test
+name: CI Java Maven
 
 on:
   workflow_call:
@@ -23,7 +23,7 @@ on:
         type: string
 
 jobs:
-  java-build-test:
+  ci-java-maven:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
