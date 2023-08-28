@@ -23,6 +23,10 @@ on:
           [create-pull-request](https://github.com/peter-evans/create-pull-request).
         type: string
         required: false
+    secrets:
+      token:
+        description: a repo scoped Personal Access Token (PAT).
+        required: true
 
 jobs:
   open-pr-to-main:
@@ -41,7 +45,7 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.token }}
           base: ${{ inputs.base_branch}}
           branch: ${{ steps.extract_branch.outputs.branch }}
           title: ${{ inputs.title }}
