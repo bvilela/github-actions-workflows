@@ -46,8 +46,8 @@ jobs:
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.token }}
-          base: ${{ steps.extract_branch.outputs.branch }}
-          branch: ${{ inputs.base_branch}}
+          base: ${{ inputs.base_branch}}
+          branch: ${{ steps.extract_branch.outputs.branch }}
           title: ${{ inputs.title }}
           commit-message: ${{ inputs.commit_message }}
           body: ${{ inputs.body }}
