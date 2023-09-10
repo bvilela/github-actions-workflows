@@ -33,8 +33,8 @@ jobs:
 
       - name: Create Pull Request
         run: |
-          gh pr list --state open --base ${{ inputs.base_branch }} --head ${{ steps.extract_branch.outputs.branch }} | wc -l
-          if [[ $? == 0 ]]; then
+          COUNT=$(gh pr list --state open --base ${{ inputs.base_branch }} --head ${{ steps.extract_branch.outputs.branch }} | wc -l)
+          if [[ $COUNT == 0 ]]; then
             echo "Create PR"
             gh pr create -B ${{ inputs.base_branch }} -H ${{ steps.extract_branch.outputs.branch }}  \
             --title '[auto-generated] Merge ${{ steps.extract_branch.outputs.branch }} into ${{ inputs.base_branch }}' \
