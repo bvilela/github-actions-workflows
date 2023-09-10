@@ -46,6 +46,9 @@ jobs:
             echo "Running Build with Settings.xml file"
             mvn -s $GITHUB_WORKSPACE/.github/workflows/${{ inputs.maven_settings_file }} -B package --file ${{ inputs.pom_path }} -DskipTests
           fi
+        env:
+          USER_NAME: ${{ secrets.USER_NAME }}
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         
         #### TESTS #####
       - name: Test
@@ -57,3 +60,6 @@ jobs:
             echo "Running Tests with Settings.xml file"
             mvn -s $GITHUB_WORKSPACE/.github/workflows/${{ inputs.maven_settings_file }} test --file ${{ inputs.pom_path }}
           fi
+        env:
+          USER_NAME: ${{ secrets.USER_NAME }}
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
