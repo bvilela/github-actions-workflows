@@ -36,5 +36,10 @@ jobs:
           gh pr create -B ${{ inputs.base_branch }} -H ${{ steps.extract_branch.outputs.branch }}  \
           --title '[auto-generated] Merge ${{ steps.extract_branch.outputs.branch }} into ${{ inputs.base_branch }}' \
           --body '${{ inputs.body }}'
+
+          if [[ $? == 1 ]]; then
+            echo "A pull request for branch "${{ steps.extract_branch.outputs.branch }}" into branch "${{ inputs.base_branch }}" already exists:"
+            exit 0
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.token }}
