@@ -1,0 +1,61 @@
+on:
+  workflow_call:
+    inputs:
+      java_version:
+        default: 11
+        required: false
+        type: number
+      distribution:
+        default: 'temurin'
+        required: false
+        type: string
+      pom_path:
+        description: Path to pom.xml file
+        default: 'app/pom.xml'
+        required: false
+        type: string
+      maven_settings_file:
+        description: Path to maven-settings.xml file, if necessary
+        default: null
+        required: false
+        type: string
+
+jobs:
+  cd-java-maven:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      
+      - name: Setup JDK ${{ inputs.java_version }} 
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ inputs.java_version }}
+          distribution: ${{ inputs.distribution }}
+          server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
+          settings-path: ${{ github.workspace }} # location for the settings.xml file
+
+      - name: Publish to GitHub Packages
+        run: |
+          if [[ ${{ inputs.maven_settings_file }} == null ]]; then
+            echo "Running Tests without Settings.xml file"
+            mvn deploy -s --file ${{ inputs.pom_path }}
+          else
+            echo "Running Tests with Settings.xml file"
+            mvn deploy -s $GITHUB_WORKSPACE/.github/workflows/${{ inputs.maven_settings_file }} --file ${{ inputs.pom_path }}
+          fi
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      
+      - name: Delete Old Package Versions
+        uses: actions/delete-package-versions@v4
+        with: 
+          package-name: br.com.bvilela.list-builder*
+          package-type: maven
+          min-versions-to-keep: 3
