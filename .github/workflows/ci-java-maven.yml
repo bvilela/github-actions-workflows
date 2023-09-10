@@ -1,0 +1,65 @@
+on:
+  workflow_call:
+    inputs:
+      java_version:
+        default: 11
+        required: false
+        type: number
+      distribution:
+        default: 'temurin'
+        required: false
+        type: string
+      pom_path:
+        description: Path to pom.xml file
+        default: 'app/pom.xml'
+        required: false
+        type: string
+      maven_settings_file:
+        description: Path to maven-settings.xml file, if necessary
+        default: null
+        required: false
+        type: string
+
+jobs:
+  ci-java-maven:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      
+      - name: Setup JDK ${{ inputs.java_version }} 
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ inputs.java_version }}
+          distribution: ${{ inputs.distribution }} 
+          cache: maven # Memorizar dependências
+
+        ##### BUILD #####
+      - name: Build
+        run: |
+          if [[ ${{ inputs.maven_settings_file }} == null ]]; then
+            echo "Running Build without Settings.xml file"
+            mvn -B package --file ${{ inputs.pom_path }} -DskipTests
+          else
+            echo "Running Build with Settings.xml file"
+            mvn -s $GITHUB_WORKSPACE/.github/workflows/${{ inputs.maven_settings_file }} -B package --file ${{ inputs.pom_path }} -DskipTests
+          fi
+        env:
+          USER_NAME: ${{ secrets.USER_NAME }}
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        
+        #### TESTS #####
+      - name: Test
+        run: |
+          if [[ ${{ inputs.maven_settings_file }} == null ]]; then
+            echo "Running Tests without Settings.xml file"
+            mvn test --file ${{ inputs.pom_path }}
+          else
+            echo "Running Tests with Settings.xml file"
+            mvn -s $GITHUB_WORKSPACE/.github/workflows/${{ inputs.maven_settings_file }} test --file ${{ inputs.pom_path }}
+          fi
+        env:
+          USER_NAME: ${{ secrets.USER_NAME }}
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}

@@ -1,0 +1,18 @@
+name: 1.branch-commit
+
+on:
+  push:
+    branches:
+      - '**'      # include all branches
+      - '!main'   # exclude branche main
+    paths-ignore:
+      - '**/README.md'
+
+jobs:
+  # Skipping workflow: add '[skip ci]' string in commit message
+  # Ref: https://docs.github.com/en/actions/managing-workflow-runs/skipping-workflow-runs
+
+  open-pr-to-main:
+    uses: ./.github/workflows/open-pr-to-main.yml
+    secrets: 
+      token: ${{ secrets.ACCESS_TOKEN_AUTO_PR_CREATE }}

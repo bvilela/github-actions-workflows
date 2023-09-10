@@ -1,0 +1,46 @@
+on:
+  workflow_call:
+    inputs:
+      version:
+        description: 'PMD version'
+        default: '6.53.0'
+        required: false
+        type: string
+      source_path:
+        description: 'Source Path to Analyse'
+        default: 'app/src'
+        required: false
+        type: string
+      rulesets:
+        description: 'Rulesets file path'
+        default: 'app/pmd-ruleset.xml'
+        required: false
+        type: string
+
+
+jobs:
+  pmd-java-maven:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Run PMD Rules
+        uses: pmd/pmd-github-action@v1
+        id: pmd-check
+        with:
+          version: ${{ inputs.version }}
+          sourcePath: ${{ inputs.source_path }}
+          rulesets: ${{ inputs.rulesets }}
+          analyzeModifiedFilesOnly: false
+
+      - name: Check PMD Rules Violation
+        run: |
+          if [[ ${{ steps.pmd-check.outputs.violations }} == 0 ]]; then
+            echo "No violation of the PMD Rules. Congratulations! :)"
+          else
+            echo "Attention: ${{ steps.pmd-check.outputs.violations }} PMD rules violations!!!"
+            echo "Check previous step for more details!!!"
+            echo "To continue, no violation is required"
+            exit 1
+          fi
