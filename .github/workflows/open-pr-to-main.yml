@@ -31,9 +31,11 @@ jobs:
         run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
         id: extract_branch
 
-      - name: Create Pull Request
+      - name: Create/Update Pull Request
         run: |
-          gh pr edit ${{ steps.extract_branch.outputs.branch }} || \
+          gh pr edit ${{ steps.extract_branch.outputs.branch }} \
+          --title '[auto-generated] Merge ${{ steps.extract_branch.outputs.branch }} into ${{ inputs.base_branch }}' \
+          --body '${{ inputs.body }}' || \
           gh pr create -B ${{ inputs.base_branch }} -H ${{ steps.extract_branch.outputs.branch }}  \
           --title '[auto-generated] Merge ${{ steps.extract_branch.outputs.branch }} into ${{ inputs.base_branch }}' \
           --body '${{ inputs.body }}'
