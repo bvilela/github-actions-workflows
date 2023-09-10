@@ -33,12 +33,20 @@ jobs:
 
       - name: Create/Update Pull Request
         run: |
-          gh pr edit ${{ steps.extract_branch.outputs.branch }} \
-          --title '[auto-generated] Merge ${{ steps.extract_branch.outputs.branch }} into ${{ inputs.base_branch }}' \
-          --body '${{ inputs.body }}' && gh pr reopen ${{ steps.extract_branch.outputs.branch }} || \
-          gh pr create -B ${{ inputs.base_branch }} -H ${{ steps.extract_branch.outputs.branch }}  \
-          --title '[auto-generated] Merge ${{ steps.extract_branch.outputs.branch }} into ${{ inputs.base_branch }}' \
-          --body '${{ inputs.body }}'
+          if [[ gh pr list --state open --base ${{ inputs.base_branch }} --head ${{ steps.extract_branch.outputs.branch }} | wc -l > 0 ]]; then
+            echo "Pull Request already open!"
+          else
+            gh pr create -B ${{ inputs.base_branch }} -H ${{ steps.extract_branch.outputs.branch }}  \
+              --title '[auto-generated] Merge ${{ steps.extract_branch.outputs.branch }} into ${{ inputs.base_branch }}' \
+              --body '${{ inputs.body }}'
+          fi
+        # run: |
+        #   gh pr edit ${{ steps.extract_branch.outputs.branch }} \
+        #   --title '[auto-generated] Merge ${{ steps.extract_branch.outputs.branch }} into ${{ inputs.base_branch }}' \
+        #   --body '${{ inputs.body }}' && gh pr reopen ${{ steps.extract_branch.outputs.branch }} || \
+        #   gh pr create -B ${{ inputs.base_branch }} -H ${{ steps.extract_branch.outputs.branch }}  \
+        #   --title '[auto-generated] Merge ${{ steps.extract_branch.outputs.branch }} into ${{ inputs.base_branch }}' \
+        #   --body '${{ inputs.body }}'
           
         env:
           GITHUB_TOKEN: ${{ secrets.token }}
