@@ -37,8 +37,8 @@ jobs:
             echo "Pull Request already open!"
           else
             gh pr create -B ${{ inputs.base_branch }} -H ${{ steps.extract_branch.outputs.branch }}  \
-              --title '[auto-generated] Merge ${{ steps.extract_branch.outputs.branch }} into ${{ inputs.base_branch }}' \
-              --body '${{ inputs.body }}'
+            --title '[auto-generated] Merge ${{ steps.extract_branch.outputs.branch }} into ${{ inputs.base_branch }}' \
+            --body '${{ inputs.body }}'
           fi
         # run: |
         #   gh pr edit ${{ steps.extract_branch.outputs.branch }} \
