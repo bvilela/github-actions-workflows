@@ -35,6 +35,7 @@ jobs:
         run: |
           if [[ gh pr list --state open --base ${{ inputs.base_branch }} --head ${{ steps.extract_branch.outputs.branch }} | wc -l > 0 ]]; then
             echo "Pull Request already open!"
+            exit 0
           else
             gh pr create -B ${{ inputs.base_branch }} -H ${{ steps.extract_branch.outputs.branch }}  \
             --title '[auto-generated] Merge ${{ steps.extract_branch.outputs.branch }} into ${{ inputs.base_branch }}' \
